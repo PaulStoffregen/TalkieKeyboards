@@ -37,16 +37,28 @@
 #define PS2_ENTER			13
 #define PS2_BACKSPACE			127
 #define PS2_ESC				27
-#define PS2_INSERT			0
-#define PS2_DELETE			127
-#define PS2_HOME			0
-#define PS2_END				0
-#define PS2_PAGEUP			25
-#define PS2_PAGEDOWN			26
-#define PS2_UPARROW			11
-#define PS2_LEFTARROW			8
-#define PS2_DOWNARROW			10
-#define PS2_RIGHTARROW			21
+#define PS2_INSERT			75
+#define PS2_DELETE			78
+#define PS2_HOME			76
+#define PS2_END				79
+#define PS2_PAGEUP			77
+#define PS2_PAGEDOWN			80
+#define PS2_UPARROW			81
+#define PS2_LEFTARROW			82
+#define PS2_DOWNARROW			83
+#define PS2_RIGHTARROW			84
+#define PS2_PRINTSCREEN			85
+#define PS2_PAUSEBREAK			87
+//#define PS2_INSERT			0
+//#define PS2_DELETE			127
+//#define PS2_HOME			0
+//#define PS2_END			0
+//#define PS2_PAGEUP			25
+//#define PS2_PAGEDOWN			26
+//#define PS2_UPARROW			11
+//#define PS2_LEFTARROW			8
+//#define PS2_DOWNARROW			10
+//#define PS2_RIGHTARROW		21
 #define PS2_F1				0
 #define PS2_F2				0
 #define PS2_F3				0
@@ -227,6 +239,7 @@ private:
 	uint8_t bitcount=0;
 	uint8_t incoming=0;
 	uint32_t prev_ms=0;
+	uint8_t state;
 
 };
 

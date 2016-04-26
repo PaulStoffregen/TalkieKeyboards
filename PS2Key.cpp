@@ -268,20 +268,23 @@ const PROGMEM PS2Keymap_t PS2Keymap_French = {
 #define SHIFT_L   0x04
 #define SHIFT_R   0x08
 #define ALTGR     0x10
+#define MODIFIER2 0x20
 
 char PS2Keyboard::get_iso8859_code(void)
 {
-	static uint8_t state=0;
 	uint8_t s;
 	char c;
 
 	while (1) {
 		s = get_scan_code();
 		if (!s) return 0;
+		//Serial.printf("%02X ", s);
 		if (s == 0xF0) {
 			state |= BREAK;
 		} else if (s == 0xE0) {
 			state |= MODIFIER;
+		} else if (s == 0xE1) {
+			state |= MODIFIER2;
 		} else {
 			if (state & BREAK) {
 				if (s == 0x12) {
@@ -298,12 +301,23 @@ char PS2Keyboard::get_iso8859_code(void)
 			}
 			if (s == 0x12) {
 				state |= SHIFT_L;
-				continue;
+				//continue;  // allow left shift key
 			} else if (s == 0x59) {
 				state |= SHIFT_R;
-				continue;
+				//continue;  // allow right shift key
 			} else if (s == 0x11 && (state & MODIFIER)) {
 				state |= ALTGR;
+				return 71; // right alt key
+			} else if (s == 0x1F && (state & MODIFIER)) {
+				return 68; // left windows key
+			} else if (s == 0x27 && (state & MODIFIER)) {
+				return 72; // right windows key
+			} else if (s == 0x2F && (state & MODIFIER)) {
+				return 73; // command key
+			} else if (s == 0x14 && (state & MODIFIER)) {
+				return 74; // right control key
+			} else if (s == 0x12 && (state & MODIFIER)) {
+				return 85; // print screen key
 			}
 			c = 0;
 			if (state & MODIFIER) {
@@ -318,10 +332,14 @@ char PS2Keyboard::get_iso8859_code(void)
 				  case 0x6B: c = PS2_LEFTARROW;   break;
 				  case 0x72: c = PS2_DOWNARROW;   break;
 				  case 0x74: c = PS2_RIGHTARROW;  break;
-				  case 0x4A: c = '/';             break;
-				  case 0x5A: c = PS2_ENTER;       break;
+				  case 0x7C: c = PS2_PRINTSCREEN; break;
+				  case 0x4A: c = 89;              break; // keypad /
+				  case 0x5A: c = 102; 	          break; // keypad enter
 				  default: break;
 				}
+			} else if ((state & MODIFIER2) && (s == 0x14)) {
+				c = PS2_PAUSEBREAK;
+				state = 0;
 			} else if ((state & ALTGR) && keymap->uses_altgr) {
 				if (s < PS2_KEYMAP_SIZE)
 					c = pgm_read_byte(keymap->altgr + s);
@@ -332,7 +350,7 @@ char PS2Keyboard::get_iso8859_code(void)
 				if (s < PS2_KEYMAP_SIZE)
 					c = pgm_read_byte(keymap->noshift + s);
 			}
-			state &= ~(BREAK | MODIFIER);
+			state &= ~(BREAK | MODIFIER | MODIFIER2);
 			if (c) return c;
 		}
 	}
@@ -401,6 +419,7 @@ void PS2Keyboard::begin(uint8_t data_pin, uint8_t irq_pin, const PS2Keymap_t &ma
 
 	bitcount = 0;
 	incoming = 0;
+	state = 0;
 	head = 0;
 	tail = 0;
 	for (uint8_t i=0; i<8; i++) {
