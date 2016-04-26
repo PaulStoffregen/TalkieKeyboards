@@ -1,4 +1,5 @@
 #include "PS2Key.h"
+#include "words.h"
 
 PS2Keyboard keyboard1;
 PS2Keyboard keyboard2;
@@ -62,6 +63,8 @@ void loop() {
 		int n = keyboard1.read();
 		Serial.print("keyboard1 = ");
 		Serial.println(n);
+		const uint8_t *p = wordlist[104*0+n-1];
+		Serial.println(p[0], HEX);
 	}
 	if (keyboard2.available()) {
 		int n = keyboard2.read();
@@ -82,6 +85,7 @@ void loop() {
 		int n = keyboard5.read();
 		Serial.print("keyboard5 = ");
 		Serial.println(n);
+		//Serial.println(*wordlist[104*4+n-1], HEX);
 	}
 
 }

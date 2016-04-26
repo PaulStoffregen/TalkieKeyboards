@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+extern const uint8_t * const wordlist[];
+
 extern const uint8_t spZERO[];
 extern const uint8_t spONE[];
 extern const uint8_t spTWO[];
