@@ -1,11 +1,59 @@
+#include <Talkie.h>
 #include "PS2Key.h"
 #include "words.h"
+
+Talkie voice;
 
 PS2Keyboard keyboard1;
 PS2Keyboard keyboard2;
 PS2Keyboard keyboard3;
 PS2Keyboard keyboard4;
 PS2Keyboard keyboard5;
+
+extern const PROGMEM PS2Keymap_t myKeymap;
+
+void setup() {
+	pinMode(5, OUTPUT);
+	digitalWrite(5, HIGH);               // turn on amplifier
+	delay(10);
+	while (!Serial && millis() < 2000) ; // wait up to 2 sec for serial monitor
+	Serial.println("Five Keyboard Test:");
+	keyboard1.begin(23, 22, myKeymap);
+	keyboard2.begin(21, 20, myKeymap);
+	keyboard3.begin(3, 2, myKeymap);
+	keyboard4.begin(8, 4, myKeymap);
+	keyboard5.begin(14, 15, myKeymap);
+	Serial.begin(9600);
+}
+
+void say(int keyboard, int key)
+{
+	Serial.print("keyboard: ");
+	Serial.print(keyboard);
+	Serial.print(", key: ");
+	Serial.println(key);
+	voice.sayQ(wordlist[(keyboard-1) * 104 + (key-1)]);
+}
+
+void loop() {
+	if (keyboard1.available()) {
+		say(1, keyboard1.read());
+	}
+	if (keyboard2.available()) {
+		say(2, keyboard2.read());
+	}
+	if (keyboard3.available()) {
+		say(3, keyboard3.read());
+	}
+	if (keyboard4.available()) {
+		say(4, keyboard4.read());
+	}
+	if (keyboard5.available()) {
+		say(5, keyboard5.read());
+	}
+
+}
+
 
 const PROGMEM PS2Keymap_t myKeymap = {
   // without shift
@@ -46,46 +94,3 @@ const PROGMEM PS2Keymap_t myKeymap = {
         0, 0, 0, 7 },
         0
 };
-
-void setup() {
-	while (!Serial && millis() < 2000) ; // wait up to 2 sec for serial monitor
-	Serial.println("Five Keyboard Test:");
-	keyboard1.begin(23, 22, myKeymap);
-	keyboard2.begin(21, 20, myKeymap);
-	keyboard3.begin(3, 2, myKeymap);
-	keyboard4.begin(8, 4, myKeymap);
-	keyboard5.begin(14, 15, myKeymap);
-	Serial.begin(9600);
-}
-
-void loop() {
-	if (keyboard1.available()) {
-		int n = keyboard1.read();
-		Serial.print("keyboard1 = ");
-		Serial.println(n);
-		const uint8_t *p = wordlist[104*0+n-1];
-		Serial.println(p[0], HEX);
-	}
-	if (keyboard2.available()) {
-		int n = keyboard2.read();
-		Serial.print("keyboard2 = ");
-		Serial.println(n);
-	}
-	if (keyboard3.available()) {
-		int n = keyboard3.read();
-		Serial.print("keyboard3 = ");
-		Serial.println(n);
-	}
-	if (keyboard4.available()) {
-		int n = keyboard4.read();
-		Serial.print("keyboard4 = ");
-		Serial.println(n);
-	}
-	if (keyboard5.available()) {
-		int n = keyboard5.read();
-		Serial.print("keyboard5 = ");
-		Serial.println(n);
-		//Serial.println(*wordlist[104*4+n-1], HEX);
-	}
-
-}
