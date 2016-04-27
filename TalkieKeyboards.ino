@@ -9,6 +9,9 @@ PS2Keyboard keyboard2;
 PS2Keyboard keyboard3;
 PS2Keyboard keyboard4;
 PS2Keyboard keyboard5;
+PS2Keyboard keyboard6;
+PS2Keyboard keyboard7;
+PS2Keyboard keyboard8;
 
 extern const PROGMEM PS2Keymap_t myKeymap;
 
@@ -23,6 +26,9 @@ void setup() {
 	keyboard3.begin(3, 2, myKeymap);
 	keyboard4.begin(8, 4, myKeymap);
 	keyboard5.begin(14, 15, myKeymap);
+	keyboard6.begin(16, 17, myKeymap);
+	keyboard7.begin(0, 1, myKeymap);
+	keyboard8.begin(10, 9, myKeymap);
 	Serial.begin(9600);
 }
 
@@ -51,7 +57,15 @@ void loop() {
 	if (keyboard5.available()) {
 		say(5, keyboard5.read());
 	}
-
+	if (keyboard6.available()) {
+		say(6, keyboard6.read());
+	}
+	if (keyboard7.available()) {
+		say(7, keyboard7.read());
+	}
+	if (keyboard8.available()) {
+		say(8, keyboard8.read());
+	}
 }
 
 
