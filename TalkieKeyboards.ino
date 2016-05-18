@@ -16,10 +16,12 @@ PS2Keyboard keyboard8;
 extern const PROGMEM PS2Keymap_t myKeymap;
 
 void setup() {
+	pinMode(18, INPUT_PULLUP);
+	attachInterrupt(18, shutup, FALLING);
 	pinMode(5, OUTPUT);
 	digitalWrite(5, HIGH);               // turn on amplifier
 	delay(10);
-	while (!Serial && millis() < 2000) ; // wait up to 2 sec for serial monitor
+	//while (!Serial && millis() < 2000) ; // wait up to 2 sec for serial monitor
 	Serial.println("Five Keyboard Test:");
 	keyboard1.begin(23, 22, myKeymap);
 	keyboard2.begin(21, 20, myKeymap);
@@ -30,6 +32,11 @@ void setup() {
 	keyboard7.begin(0, 1, myKeymap);
 	keyboard8.begin(10, 9, myKeymap);
 	Serial.begin(9600);
+}
+
+void shutup()
+{
+	SCB_AIRCR = 0x05FA0004; // reset
 }
 
 void say(int keyboard, int key)
